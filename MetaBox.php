@@ -61,7 +61,7 @@ class MetaBox {
 	/**
 	 * Meta box fields
 	 *
-	 * @var FieldGroup
+	 * @var FieldContainer
 	 */
 	public $fields;
 
@@ -113,7 +113,7 @@ class MetaBox {
 		if ( isset( $_POST[ $this->nonceName ] ) && wp_verify_nonce( $_POST[ $this->nonceName ], $this->nonceAction ) ) {
 			if ( current_user_can( 'edit_post', $post_id ) ) {
 				foreach ( $this->fields as $field ) {
-					$field->save( $post_id, $_POST[ $field->name ] ) );
+					$field->save( $post_id, $_POST[ $field->name ] );
 				}
 			}
 		}
@@ -125,11 +125,13 @@ class MetaBox {
 	 * @param \WP_Post $post
 	 */
 	public function render( \WP_Post $post ) {
+		do_action( __METHOD__ . ':before', $this, $post );
 		foreach ( $this->fields as $field ) {
 			$field->value = $field->fetch( $post->ID );
 			$field->render();
 		}
 		wp_nonce_field( $this->nonceAction, $this->nonceName );
+		do_action( __METHOD__ . ':after', $this, $post );
 	}
 
 }
