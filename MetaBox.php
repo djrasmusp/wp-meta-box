@@ -78,7 +78,7 @@ class MetaBox {
 		$this->screen      = $postType;
 		$this->nonceName   = 'metabox-' . $id . '-nonce';
 		$this->nonceAction = 'update-metabox-' . $id;
-		$this->fields      = new FieldGroup();
+		$this->fields      = new FieldContainer();
 		$this->setUp();
 	}
 
@@ -113,7 +113,7 @@ class MetaBox {
 		if ( isset( $_POST[ $this->nonceName ] ) && wp_verify_nonce( $_POST[ $this->nonceName ], $this->nonceAction ) ) {
 			if ( current_user_can( 'edit_post', $post_id ) ) {
 				foreach ( $this->fields as $field ) {
-					$field->save( $post_id, filter_input( INPUT_POST, $field->name ) );
+					$field->save( $post_id, $_POST[ $field->name ] ) );
 				}
 			}
 		}
